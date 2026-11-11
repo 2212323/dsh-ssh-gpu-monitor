@@ -28,7 +28,7 @@ Copy the template beside the bundled connector:
 cp ssh/.env.example ssh/.env
 ```
 
-Set `SSH_HOST`, `SSH_PORT`, `SSH_USER`, and `SSH_PASSWORD` in `ssh/.env`. The `.env` file is intentionally ignored by Git and must never be committed. For an installed package, set `DSH_GPU_MONITOR_ROOT` to the directory containing `ssh/.env` if the profile cannot discover it automatically.
+Set `SSH_HOST`, `SSH_PORT`, `SSH_USER`, and `SSH_PASSWORD` in `ssh/.env`. The `.env` file is intentionally ignored by Git and must never be committed. For an installed package, copy `ssh/.env.example` to the package's `ssh/.env`, or set `DSH_GPU_MONITOR_ROOT` to a separate directory containing `ssh/.env` if the profile cannot discover it automatically. On Windows, the installed package is usually under `%USERPROFILE%\\.dsh\\profiles\\<profile>\\node_modules\\dsh-ssh-gpu-monitor\\ssh\\.env`.
 
 > Password authentication is supported for compatibility. For production deployments, prefer an SSH key and a dedicated read-only monitoring account. The plugin only executes read-only commands.
 
