@@ -1,0 +1,14 @@
+{
+  "name": "dsh-ssh-gpu-monitor",
+  "version": "1.0.0",
+  "description": "A DSH better-sidebar tab for live SSH GPU, process, and host monitoring.",
+  "keywords": ["dsh", "plugin", "gpu", "nvidia", "ssh", "monitoring", "better-sidebar"],
+  "license": "MIT",
+  "author": "DSH community",
+  "publishConfig": { "access": "public" },
+  "type": "module",
+  "exports": { ".": "./index.js", "./client": "./client.js", "./locale/*.json": "./locale/*.json", "./icon": "./icon.svg" },
+  "files": ["index.js", "client.js", "cordis.patch.yml", "README.md", "CHANGELOG.md", "LICENSE", "locale/*.json", "icon.svg", "ssh/connect.py", "ssh/.env.example"],
+  "engines": { "node": ">=20" },
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" }, "client": { "platform": "web", "immediately": true, "inject": ["@deepseek-ai/dsh-client-ui-conversation", "dsh-better-sidebar"] } }
+}

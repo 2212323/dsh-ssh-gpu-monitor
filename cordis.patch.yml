@@ -1,0 +1,3 @@
+- insert:
+    - id: dsh-gpu-monitor
+      name: 'dsh-ssh-gpu-monitor'
