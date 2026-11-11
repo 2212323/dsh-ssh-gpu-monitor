@@ -209,13 +209,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="用密码连接 SSH 服务器")
     parser.add_argument("-c", "--command", help="只执行一条命令，不进入 shell")
     parser.add_argument("--env-file", default=os.path.join(HERE, ".env"), help="配置文件路径")
+    parser.add_argument("--host", help="SSH host")
+    parser.add_argument("--port", help="SSH port")
+    parser.add_argument("--user", help="SSH user")
+    parser.add_argument("--password", help="SSH password")
     args = parser.parse_args()
 
-    cfg = load_env(args.env_file)
-    host = cfg.get("SSH_HOST", "").strip()
-    user = cfg.get("SSH_USER", "").strip()
-    password = cfg.get("SSH_PASSWORD", "")
-    port_text = cfg.get("SSH_PORT", "").strip() or "22"
+    cfg = load_env(args.env_file) if os.path.exists(args.env_file) else {}
+    host = (args.host or cfg.get("SSH_HOST", "")).strip()
+    user = (args.user or cfg.get("SSH_USER", "")).strip()
+    password = args.password or cfg.get("SSH_PASSWORD", "")
+    port_text = (args.port or cfg.get("SSH_PORT", "")).strip() or "22"
 
     if not host or host == "YOUR_SERVER_IP":
         die("ssh/.env 里的 SSH_HOST 还没填（当前：%r）" % host, 2)

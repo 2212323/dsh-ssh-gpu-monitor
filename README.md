@@ -22,7 +22,9 @@ Then hard-refresh the DSH page and open **GPU 监控** from the right sidebar's 
 
 ## Configure SSH
 
-Copy the template beside the bundled connector:
+Open the GPU 监控 tab. On first use it shows a configuration form for host, port, username, and password. Credentials are held by the running Host process and are not committed or shown in the UI after submission.
+
+For headless/local setup, copy the template beside the bundled connector:
 
 ```bash
 cp ssh/.env.example ssh/.env
