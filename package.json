@@ -1,6 +1,6 @@
 {
   "name": "dsh-ssh-gpu-monitor",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A DSH better-sidebar tab for live SSH GPU, process, and host monitoring.",
   "keywords": ["dsh", "plugin", "gpu", "nvidia", "ssh", "monitoring", "better-sidebar"],
   "license": "MIT",
