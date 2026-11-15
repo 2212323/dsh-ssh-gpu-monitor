@@ -2,10 +2,11 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 const execFileAsync=promisify(execFile);
 const packageRoot=path.dirname(fileURLToPath(import.meta.url));
-let runtimeConfig={};
+const configFile=path.join(packageRoot,'.ssh-gpu-monitor.json');
+let runtimeConfig=(()=>{try{return JSON.parse(readFileSync(configFile,'utf8'))}catch{return {}}})();
 function root(){const configured=process.env.DSH_GPU_MONITOR_ROOT;if(configured)return configured;const workspace=path.resolve(packageRoot,'..');return existsSync(path.join(workspace,'ssh','.env'))?workspace:packageRoot}
 async function snapshot(){
  const script=path.join(root(),'ssh','connect.py');
@@ -24,5 +25,5 @@ async function snapshot(){
 }
 export const inject=['webServer'];
 function json(res,status,value){res.statusCode=status;res.setHeader('content-type','application/json; charset=utf-8');res.end(JSON.stringify(value))}
-export function apply(ctx){const web=ctx.get('webServer');if(!web)return;ctx.effect(()=>web.register({kind:'exact',path:'/api/dsh-gpu-monitor',resource:async()=>new Response(JSON.stringify(await snapshot()),{headers:{'content-type':'application/json; charset=utf-8'}})}));ctx.effect(()=>web.register({kind:'exact',path:'/api/dsh-gpu-monitor/config',handler:async(req,res)=>{if(req.method==='GET')return json(res,200,{ok:true,configured:!!runtimeConfig.host,host:runtimeConfig.host||'',port:runtimeConfig.port||'22',user:runtimeConfig.user||''});if(req.method!=='POST')return json(res,405,{ok:false,error:'method not allowed'});let body='';for await(const chunk of req)body+=chunk;try{const v=JSON.parse(body);if(!v.host||!v.user||(!v.password&&!runtimeConfig.password))return json(res,400,{ok:false,error:'host, user and password are required'});runtimeConfig={host:String(v.host),port:String(v.port||22),user:String(v.user),password:String(v.password||runtimeConfig.password)};return json(res,200,{ok:true})}catch{return json(res,400,{ok:false,error:'invalid JSON'})}}}))}
+export function apply(ctx){const web=ctx.get('webServer');if(!web)return;ctx.effect(()=>web.register({kind:'exact',path:'/api/dsh-gpu-monitor',resource:async()=>new Response(JSON.stringify(await snapshot()),{headers:{'content-type':'application/json; charset=utf-8'}})}));ctx.effect(()=>web.register({kind:'exact',path:'/api/dsh-gpu-monitor/config',handler:async(req,res)=>{if(req.method==='GET')return json(res,200,{ok:true,configured:!!runtimeConfig.host,host:runtimeConfig.host||'',port:runtimeConfig.port||'22',user:runtimeConfig.user||''});if(req.method!=='POST')return json(res,405,{ok:false,error:'method not allowed'});let body='';for await(const chunk of req)body+=chunk;try{const v=JSON.parse(body);if(!v.host||!v.user||(!v.password&&!runtimeConfig.password))return json(res,400,{ok:false,error:'host, user and password are required'});runtimeConfig={host:String(v.host),port:String(v.port||22),user:String(v.user),password:String(v.password||runtimeConfig.password)};try{writeFileSync(configFile,JSON.stringify(runtimeConfig),'utf8')}catch{};return json(res,200,{ok:true})}catch{return json(res,400,{ok:false,error:'invalid JSON'})}}}))}
 
